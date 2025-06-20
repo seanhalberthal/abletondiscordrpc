@@ -28,7 +28,7 @@ A Go application that displays Discord Rich Presence status when Ableton Live 12
 ### Quick Install
 
 ```bash
-#Open Terminal and run these commands to install the app
+# Open Terminal and run the following commands to install the app. If you're not sure where to run them, you can download the repo to your desktop first.
 
 # Run this first
 git clone https://github.com/seanhalberthal/abletondiscordrpc.git
@@ -109,7 +109,7 @@ abletondiscordrpc/
 
 - Uses the `rich-go` library for Discord RPC
 - Implements automatic reconnection on connection failures
-- Supports custom assets for branding
+- Supports custom status messages via CLI commands
 
 ## Development
 
