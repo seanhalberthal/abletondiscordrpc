@@ -27,8 +27,6 @@ A Go application that displays Discord Rich Presence status when Ableton Live 12
 
 ### Quick Install
 
-**Quick Install**
-
 ```bash
 #Open Terminal and run these commands to install the app
 
