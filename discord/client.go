@@ -46,7 +46,7 @@ func (c *Client) IsConnected() bool {
 // SetActivity updates the Discord Rich Presence activity
 func (c *Client) SetActivity(details, state, largeText string, startTime *time.Time) error {
 	if !c.connected {
-		return fmt.Errorf("Discord client not connected")
+		return fmt.Errorf("discord client not connected")
 	}
 
 	activity := client.Activity{
@@ -68,19 +68,18 @@ func (c *Client) SetActivity(details, state, largeText string, startTime *time.T
 }
 
 // SetWaitingActivity sets the activity when Ableton is not running
-func (c *Client) SetWaitingActivity(appName string) error {
+func (c *Client) SetWaitingActivity(appName string, startTime *time.Time) error {
 	if !c.connected {
-		return fmt.Errorf("Discord client not connected")
+		return fmt.Errorf("discord client not connected")
 	}
 
-	now := time.Now()
 	activity := client.Activity{
 		State:      "Waiting for " + appName + "...",
 		Details:    "Not currently making music",
 		LargeImage: "ableton-logo",
 		LargeText:  appName,
 		Timestamps: &client.Timestamps{
-			Start: &now,
+			Start: startTime,
 		},
 	}
 

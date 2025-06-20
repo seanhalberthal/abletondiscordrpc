@@ -37,11 +37,11 @@ func main() {
 	// Initialize Ableton detector
 	detector := ableton.NewDetector()
 
-	// Set up graceful shutdown
+	// Set up a graceful shutdown
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 
-	// Create ticker for polling
+	// Create a ticker for polling
 	ticker := time.NewTicker(cfg.PollingInterval)
 	defer ticker.Stop()
 
@@ -65,7 +65,7 @@ func updateDiscordPresence(discordClient *discord.Client, detector *ableton.Dete
 	abletonInfo := detector.GetInfo()
 
 	if !abletonInfo.IsRunning {
-		err := discordClient.SetWaitingActivity(cfg.AbletonAppName)
+		err := discordClient.SetWaitingActivity(cfg.AbletonAppName, &abletonInfo.StartTime)
 		if err != nil {
 			// Attempt to reconnect on error
 			discordClient.Disconnect()
