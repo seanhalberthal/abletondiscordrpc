@@ -1,0 +1,3 @@
+8380cc6622b210fb83f852751cc8d72f3a08e3521649e34aa3ceaa7c405fd97d  ableton-discord-rpc
+ac4fd4afed818acfa93998b477542bbae7fd8217c704bd712678d93ccff1562c  ableton-discord-rpc-arm64
+a345fcf47824e1b98edd9b3b97c073412003bfde3e1d7f5b8fd69b23b56763be  ableton-discord-rpc-intel
