@@ -77,22 +77,6 @@ Your Discord status will show:
 - 🔥 **Your custom status** (e.g., "making beats")
 - **How long you've been working** (automatic timer)
 
-## Project Structure
-
-```
-abletondiscordrpc/
-├── main.go              # Main application logic
-├── ableton/             # Ableton-specific detection
-│   └── detector.go      # Process and project detection
-├── discord/             # Discord RPC handling
-│   └── client.go        # Rich Presence client wrapper
-├── config/              # Configuration
-│   └── config.go        # App configuration
-├── go.mod               # Go module definition
-├── go.sum               # Go module checksums
-└── README.md            # This file
-```
-
 ## Technical Details
 
 ### Process Detection
