@@ -37,6 +37,8 @@ git clone https://github.com/seanhalberthal/abletondiscordrpc.git
 cd abletondiscordrpc
 sudo cp releases/ableton-discord-rpc /usr/local/bin/
 sudo chmod +x /usr/local/bin/ableton-discord-rpc
+
+# Note: you may need to enter your password for sudo access
 ```
 
 ### Start Using It
