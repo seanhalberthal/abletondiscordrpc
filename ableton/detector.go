@@ -15,13 +15,18 @@ type Info struct {
 
 // Detector handles Ableton Live process and project detection
 type Detector struct {
-	lastSeenRunning bool
-	sessionStart    time.Time
+	lastSeenRunning  bool
+	sessionStart     time.Time
+	totalSessionTime time.Duration
+	lastStopTime     time.Time
+	sessionTimeout   time.Duration // Reset session after this much idle time
 }
 
 // NewDetector creates a new Ableton detector instance
 func NewDetector() *Detector {
-	return &Detector{}
+	return &Detector{
+		sessionTimeout: 2 * time.Hour, // Reset session after 2 hours of inactivity
+	}
 }
 
 // GetInfo returns current Ableton Live information
@@ -36,10 +41,19 @@ func (d *Detector) GetInfo() *Info {
 	cmd := exec.Command("pgrep", "-f", "Live")
 	err := cmd.Run()
 	if err != nil {
-		// Process not found, reset session if it was running before
+		// Process not found, update session tracking if it was running before
 		if d.lastSeenRunning {
-			d.sessionStart = time.Time{}
+			// Add the time since session start to total session time
+			if !d.sessionStart.IsZero() {
+				d.totalSessionTime += time.Since(d.sessionStart)
+			}
+			d.lastStopTime = time.Now()
 			d.lastSeenRunning = false
+		}
+
+		// Return info with preserved session start time for display
+		if !d.sessionStart.IsZero() {
+			info.StartTime = d.sessionStart
 		}
 		return info
 	}
@@ -48,7 +62,18 @@ func (d *Detector) GetInfo() *Info {
 
 	// Initialize session start time if this is the first time we see it running
 	if !d.lastSeenRunning {
-		d.sessionStart = time.Now()
+		// Check if session has timed out
+		if !d.lastStopTime.IsZero() && time.Since(d.lastStopTime) > d.sessionTimeout {
+			// Reset session after timeout
+			d.sessionStart = time.Now()
+			d.totalSessionTime = 0
+		} else if d.sessionStart.IsZero() {
+			// First time ever
+			d.sessionStart = time.Now()
+		} else {
+			// Continue from previous session, accounting for accumulated time
+			d.sessionStart = time.Now().Add(-d.totalSessionTime)
+		}
 		d.lastSeenRunning = true
 	}
 	info.StartTime = d.sessionStart

@@ -64,32 +64,40 @@ func main() {
 func updateDiscordPresence(discordClient *discord.Client, detector *ableton.Detector, cfg *config.Config) {
 	abletonInfo := detector.GetInfo()
 
-	if !abletonInfo.IsRunning {
-		err := discordClient.SetWaitingActivity(cfg.AbletonAppName, &abletonInfo.StartTime)
-		if err != nil {
-			// Attempt to reconnect on error
+	handleDiscordError := func(err error) {
+		if err == nil {
+			return
+		}
+		if strings.Contains(err.Error(), "discord disconnected") {
 			discordClient.Disconnect()
 			if reconnectErr := discordClient.Connect(); reconnectErr != nil {
 				log.Printf("Failed to reconnect to Discord: %v", reconnectErr)
 			}
+		} else {
+			log.Printf("Discord RPC error: %v", err)
 		}
-		return
 	}
 
-	// Ableton is running - show active status
-	err := discordClient.SetActivity(
-		abletonInfo.ProjectName,
-		cfg.CustomStatus,
-		cfg.AbletonAppName,
-		&abletonInfo.StartTime,
-	)
-	if err != nil {
-		// Attempt to reconnect on error
-		discordClient.Disconnect()
-		if reconnectErr := discordClient.Connect(); reconnectErr != nil {
-			log.Printf("Failed to reconnect to Discord: %v", reconnectErr)
-		}
+	setWaiting := func() {
+		err := discordClient.SetWaitingActivity(cfg.AbletonAppName, &abletonInfo.StartTime)
+		handleDiscordError(err)
 	}
+
+	setActive := func() {
+		err := discordClient.SetActivity(
+			abletonInfo.ProjectName,
+			cfg.CustomStatus,
+			cfg.AbletonAppName,
+			&abletonInfo.StartTime,
+		)
+		handleDiscordError(err)
+	}
+
+	if !abletonInfo.IsRunning {
+		setWaiting()
+		return
+	}
+	setActive()
 }
 
 // handleCLIInput handles user input for setting custom status

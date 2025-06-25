@@ -2,6 +2,7 @@ package discord
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/hugolgst/rich-go/client"
@@ -64,7 +65,16 @@ func (c *Client) SetActivity(details, state, largeText string, startTime *time.T
 		}
 	}
 
-	return client.SetActivity(activity)
+	err := client.SetActivity(activity)
+	if err != nil {
+		// Check if it's a broken pipe error (Discord disconnected)
+		if strings.Contains(err.Error(), "broken pipe") {
+			c.connected = false
+			return fmt.Errorf("discord disconnected")
+		}
+		return err
+	}
+	return nil
 }
 
 // SetWaitingActivity sets the activity when Ableton is not running
@@ -83,5 +93,14 @@ func (c *Client) SetWaitingActivity(appName string, startTime *time.Time) error 
 		},
 	}
 
-	return client.SetActivity(activity)
+	err := client.SetActivity(activity)
+	if err != nil {
+		// Check if it's a broken pipe error (Discord disconnected)
+		if strings.Contains(err.Error(), "broken pipe") {
+			c.connected = false
+			return fmt.Errorf("discord disconnected")
+		}
+		return err
+	}
+	return nil
 }
